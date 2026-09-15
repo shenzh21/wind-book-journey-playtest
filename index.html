@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#f4f5ed">
+  <title>风之书的旅途内测试玩</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="web-game.css">
+</head>
+<body>
+  <main class="app">
+    <header class="page-header">
+      <a class="brand" href="./" aria-label="风之图书馆首页"><span class="brand-icon">✦</span><span>小小探险社<small>LITTLE ADVENTURES CLUB</small></span></a>
+      <div class="edition"><span></span> 可随时出发的小游戏 <b>NO. 001</b></div>
+    </header>
+    <section class="intro">
+      <div><div class="eyebrow">A POCKET-SIZED WORLD TO GET LOST IN</div><h1>风之图书馆<span>Library of Winds</span></h1><p>一阵恶风吹散了风之图书馆。跳过云朵，钻进洞穴，把散落的风之书带回家。</p></div>
+      <div class="world-stamp"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M6 26L17 10l7 11 4-6 8 11H6Z" stroke="currentColor" stroke-width="1.5"/><path d="M7 31h27M15 16l3 3 3-3" stroke="currentColor" stroke-width="1.5"/><circle cx="30" cy="8" r="3" stroke="currentColor"/></svg><span>书洞相连的 2D 箱庭<small>MANY WORLDS, ONE LIBRARY</small></span></div>
+    </section>
+    <section class="game-shell" aria-label="风之图书馆游戏">
+      <div id="opening-ui" hidden><button id="opening-skip" aria-label="跳过开场剧情">跳过开场 · Enter</button><div class="opening-subtitles"><p id="opening-caption" aria-live="polite"></p></div></div>
+      <div class="game-toolbar">
+        <div class="location"><span class="live-dot"></span><span id="zone">风之图书馆 · 门前</span><span class="location-divider">/</span><span id="world-label" class="world-label">WIND LIBRARY</span></div>
+        <div class="toolbar-actions"><button id="pause" title="暂停（Esc）" aria-label="暂停">Ⅱ</button></div>
+      </div>
+      <div class="game-stage" id="stage">
+        <canvas id="game" width="1280" height="720" tabindex="0" aria-label="横版探索游戏。左右方向键或 A D 移动，Z 跳跃，可以二段跳，X 旋风转身，向下键蹲下。找回风之书，可以在图书馆阅读。"></canvas>
+        <div class="hud"><div class="stat"><span class="book-icon" aria-label="风之书">≋</span><strong id="book-count">0</strong><span id="book-total">/ 5</span></div><div class="stat"><span class="coin-icon"></span><strong id="coin-count">0</strong><span id="coin-total">枚</span></div><div class="hearts" id="hearts" aria-label="3 点生命">♥ ♥ ♥</div></div>
+        <div class="quest"><span>✦</span><div id="quest-text">找回散落的风之书<small>靠近馆门，按 ↑ 进入</small></div></div>
+        <div id="interaction" class="interaction" hidden></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
+        <div class="zone-caption" id="zone-caption"><span>01 — THE MEADOW</span><strong>每场冒险，都从一小步开始。</strong></div>
+        <div class="map"><div class="map-label"><span id="map-title">LIBRARY MAP</span><span>⌖</span></div><canvas id="minimap" width="360" height="164" aria-label="小岛地图"></canvas></div>
+        <div class="modal-backdrop world-map-overlay" id="map-overlay" hidden><section class="world-map-panel" role="dialog" aria-modal="true" aria-labelledby="world-map-title"><header><h2 id="world-map-title">世界地图</h2><button id="map-back">返回暂停菜单 · X / Esc</button></header><div class="world-map-surface"><canvas id="world-map" aria-label="当前世界全图"></canvas></div><p>红点：你的位置　黄色机器人：失控　绿色机器人：已修复</p></section></div>
+        <div class="modal-backdrop" id="pause-overlay" hidden><div class="modal"><span class="modal-symbol">☁</span><div class="eyebrow">TAKE A LITTLE BREATHER</div><h2>让风等你一会儿</h2><p>可以随时继续。重新进入会回到机械迷城入口，收藏进度保留。</p><button class="primary" id="resume">继续探险 <span>→</span></button><button id="library" title="阅读已找回的风之书" aria-label="打开藏书目录"><span>▤ 书目 <b id="library-count">0</b></span></button><button id="return-hub" hidden title="回到机械迷城入口" aria-label="回到机械迷城入口"><span>↶ 回到入口</span></button><button id="hint" class="hint-button">✧ 迷路了？来点提示 <span>↗</span></button><button id="menu-journal" hidden>旅途札记</button><button id="view-map">查看地图</button><button id="settings">操作与设置</button><button id="import-save">导入存档</button><button class="text-button" id="confirm-restart">清空收藏，重新开始</button></div></div>
+        <div class="modal-backdrop narrative-overlay" id="win-overlay" hidden><div class="modal"><span class="modal-symbol">✦</span><div class="eyebrow">A LITTLE ADVENTURE, COMPLETED</div><h2>书架，又满了一格。</h2><p id="win-detail">云间郊野散落的风之书已经全部找回。打开图书馆，慢慢读一读它们的故事。</p><button class="primary" id="continue">再逛一会儿 <span>→</span></button><button class="text-button" id="play-again">开启新冒险</button></div></div>
+        <div class="modal-backdrop" id="library-overlay" hidden role="dialog" aria-modal="true" aria-label="风之图书馆">
+          <section class="library-panel"><header><div><div class="eyebrow">THE LIBRARY OF WINDS</div><h2>藏书目录</h2><p id="shelf-summary"></p></div><button id="library-close" class="panel-close" aria-label="返回游戏">×</button></header><p class="library-story">那夜，一阵恶风撞开了图书馆的窗。书飞越山谷与云海，落进了各个世界。每找回一本，就有一个故事回到书架。</p><div id="shelf" class="shelf"></div><button id="export-full-save" class="text-button">导出内测存档 →</button><button id="export-godot-save" hidden class="text-button">导出存档，带到 Godot 版 →</button></section>
+        </div>
+        <div class="modal-backdrop" id="reader-overlay" hidden role="dialog" aria-modal="true" aria-label="阅读风之书">
+          <article class="reader-panel"><header class="book-frontmatter"><div class="reader-top"><span id="reader-number"></span><span id="reader-genre"></span></div><h2 id="reader-title"></h2><div class="reader-ornament" aria-hidden="true">≋</div></header><section class="book-reading-page"><div id="reader-content" class="reader-content"></div><small class="subtitle-controls">↑ ↓ 翻阅文字 · ← → 选择 · Z 确认 · X 合上书</small></section><div class="reader-bottom"><button id="reader-shelf" class="text-button">← 藏书目录</button><button id="reader-close" class="primary">合上书，继续冒险 →</button></div></article>
+        </div>
+        <div class="modal-backdrop" id="settings-overlay" hidden><section class="modal"><h2>随风而行</h2><p>← → / A D 移动 · Z 二段跳（松开降低高度）· X 旋转攻击 / 空中缓降 · C 专属动作<br>跑动中突然反向，立刻按 Z：高跳后空翻<br>↑ 进入 / 阅读 · ↓ 坐地 · ↓+Z 下穿平台 · Esc 暂停<br>菜单：方向键选择，Z / Enter 确认，X / Esc 返回<br>阅读：↑↓ / PageUp / PageDown 滚动</p><button id="sound" title="打开声音" aria-label="打开声音" aria-pressed="false">♪<span>声音关</span></button><button id="fullscreen" title="全屏" aria-label="全屏">⛶</button><button id="touch-toggle">显示 / 隐藏触控</button><button id="settings-back">返回暂停菜单</button></section></div>
+<button id="expedition-journal" hidden>J · 旅途札记 / C · 专属动作</button>
+<div class="modal-backdrop" id="journal-overlay" hidden><section class="modal journal-panel" role="dialog" aria-modal="true" aria-labelledby="journal-title"><h2 id="journal-title"></h2><p id="journal-ability"></p><div id="journal-list"></div><button id="journal-back">返回游戏</button></section></div>
+<div class="modal-backdrop" id="journal-entry-overlay" hidden><section class="modal journal-panel" role="dialog" aria-modal="true" aria-labelledby="journal-entry-title"><h2 id="journal-entry-title"></h2><p id="journal-entry-progress"></p><p id="journal-entry-text"></p><button id="journal-entry-back">返回札记</button></section></div>
+<div class="modal-backdrop narrative-overlay" id="adventure-overlay" hidden><section class="modal adventure-panel" role="region" aria-label="旅途对话"><h2 id="adventure-title"></h2><p id="adventure-text"></p><div id="adventure-options"></div></section></div>
+<div class="modal-backdrop narrative-overlay" id="race-overlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-label="和小孩交谈"><h2>山顶见！</h2><p id="race-text"></p><button id="race-start">好，我们开始吧</button><button id="race-later">合上对话</button></section></div>
+<div class="modal-backdrop narrative-overlay" id="hint-overlay" hidden><section class="modal"><h2>风留下的线索</h2><p id="hint-body"></p><button id="hint-back">返回暂停菜单</button></section></div>
+<div class="modal-backdrop" id="confirm-overlay" hidden><section class="modal"><h2>重新开始这场冒险？</h2><p>这将清空网页版的收藏与任务进度。</p><button id="reset-no">保留收藏，返回</button><button id="reset-yes">清空收藏，回到馆门口</button></section></div>
+<input id="save-file" type="file" accept=".json" hidden><div hidden><button id="restart" title="重新开始" aria-label="重新开始">↻</button></div><div class="touch-controls" aria-label="触屏游戏手柄">
+  <div class="touch-dpad" role="group" aria-label="方向">
+    <button data-key="ArrowUp" aria-label="向上：进入或阅读">↑</button>
+    <button data-key="ArrowLeft" aria-label="向左移动">←</button>
+    <button data-key="ArrowRight" aria-label="向右移动">→</button>
+    <button data-key="ArrowDown" aria-label="向下：坐地或配合跳跃下穿">↓</button>
+  </div>
+  <div class="touch-actions" role="group" aria-label="动作">
+    <button class="touch-special" data-key="KeyC" aria-label="C：专属动作">C</button>
+    <button class="touch-spin" data-key="KeyX" aria-label="X：旋转攻击">X</button>
+    <button class="touch-jump" data-key="KeyZ" aria-label="Z：跳跃">Z</button>
+  </div>
+</div>
+      </div>
+      <div class="game-bottom"><span><i></i> 自由探索模式 <b>·</b> 没有倒计时，只有好奇心</span><span id="save-status">进度自动保存在这台设备</span></div>
+    </section>
+    <section class="below-game"><div class="controls"><span class="section-label">冒险指南</span><span><kbd>←</kbd><kbd>→</kbd> 移动</span><span><kbd>Z</kbd> 跳跃 <b>再按一次二段跳</b></span><span><kbd>X</kbd> 旋风转身</span><span><kbd>↑</kbd> 进入 / 阅读</span><span><kbd>↓</kbd> 蹲下</span><span><kbd>Esc</kbd> 暂停</span></div></section>
+    <footer><span>给日常留一点冒险的空隙。</span><span>MADE FOR THE JOY OF EXPLORING <i>✳</i></span></footer>
+  </main>
+<script src="world-data.js"></script>
+<script src="expansion/machine.js"></script>
+<script src="expansion/machine-mechanics.js"></script>
+<script src="expansion/core.js"></script>
+<script src="expansion/runtime.js"></script>
+<script src="expansion/render.js"></script>
+<script src="wind-audio.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
