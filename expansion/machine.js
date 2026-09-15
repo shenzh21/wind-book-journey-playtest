@@ -360,7 +360,7 @@
       ]
     }
   ],
-  "revision": 17,
+  "revision": 18,
   "size": {
     "w": 9000,
     "h": 5000
@@ -1683,37 +1683,37 @@
     {
       "id": "machine-hand-coin-a",
       "x": 450,
-      "y": 4550
+      "y": 4562
     },
     {
       "id": "machine-hand-coin-b",
       "x": 750,
-      "y": 4550
+      "y": 4562
     },
     {
       "id": "machine-hand-coin-c",
       "x": 1280,
-      "y": 4730
+      "y": 4742
     },
     {
       "id": "machine-hand-coin-d",
       "x": 1640,
-      "y": 4730
+      "y": 4742
     },
     {
       "id": "machine-hand-coin-e",
       "x": 2000,
-      "y": 4550
+      "y": 4562
     },
     {
       "id": "machine-hand-coin-f",
       "x": 2570,
-      "y": 4390
+      "y": 4402
     },
     {
       "id": "machine-hand-coin-g",
       "x": 2840,
-      "y": 4390
+      "y": 4402
     },
     {
       "id": "machine-hand-coin-h",
@@ -1723,17 +1723,17 @@
     {
       "id": "machine-hand-coin-i",
       "x": 1510,
-      "y": 4726
+      "y": 4742
     },
     {
       "id": "machine-hand-coin-j",
       "x": 4250,
-      "y": 4170
+      "y": 4182
     },
     {
       "id": "machine-hand-coin-k",
       "x": 4590,
-      "y": 4170
+      "y": 4182
     },
     {
       "id": "machine-hand-coin-l",
@@ -1743,42 +1743,42 @@
     {
       "id": "machine-hand-coin-m",
       "x": 5750,
-      "y": 4150
+      "y": 4162
     },
     {
       "id": "machine-hand-coin-n",
       "x": 6270,
-      "y": 3990
+      "y": 4002
     },
     {
       "id": "machine-hand-coin-o",
       "x": 6730,
-      "y": 3930
+      "y": 3942
     },
     {
       "id": "machine-hand-coin-p",
       "x": 7000,
-      "y": 3930
+      "y": 3942
     },
     {
       "id": "machine-hand-coin-q",
       "x": 7570,
-      "y": 4390
+      "y": 4402
     },
     {
       "id": "machine-hand-coin-r",
       "x": 8000,
-      "y": 4390
+      "y": 4402
     },
     {
       "id": "machine-hand-coin-s",
       "x": 1190,
-      "y": 3930
+      "y": 3942
     },
     {
       "id": "machine-hand-coin-t",
       "x": 1900,
-      "y": 3750
+      "y": 3762
     },
     {
       "id": "machine-hand-coin-u",
@@ -1788,12 +1788,12 @@
     {
       "id": "machine-hand-coin-v",
       "x": 1000,
-      "y": 3130
+      "y": 3142
     },
     {
       "id": "machine-hand-coin-w",
       "x": 2060,
-      "y": 2970
+      "y": 2982
     },
     {
       "id": "machine-hand-coin-x",
@@ -1803,37 +1803,37 @@
     {
       "id": "machine-hand-coin-y",
       "x": 3290,
-      "y": 3090
+      "y": 3102
     },
     {
       "id": "machine-hand-coin-z",
       "x": 3700,
-      "y": 3590
+      "y": 3603.053
     },
     {
       "id": "machine-hand-coin-aa",
       "x": 4100,
-      "y": 3410
+      "y": 3422
     },
     {
       "id": "machine-hand-coin-ab",
       "x": 5080,
-      "y": 2950
+      "y": 2962
     },
     {
       "id": "machine-hand-coin-ac",
       "x": 6160,
-      "y": 2790
+      "y": 2802
     },
     {
       "id": "machine-hand-coin-ad",
       "x": 6990,
-      "y": 2610
+      "y": 2622
     },
     {
       "id": "machine-hand-coin-ae",
       "x": 8420,
-      "y": 3770
+      "y": 3782
     },
     {
       "id": "machine-hand-coin-af",
@@ -1843,22 +1843,22 @@
     {
       "id": "machine-hand-coin-ag",
       "x": 8050,
-      "y": 4386
+      "y": 4402
     },
     {
       "id": "machine-hand-coin-ah",
       "x": 7890,
-      "y": 2870
+      "y": 2882
     },
     {
       "id": "machine-hand-coin-ai",
       "x": 8290,
-      "y": 2330
+      "y": 2342
     },
     {
       "id": "machine-hand-coin-aj",
       "x": 7910,
-      "y": 2050
+      "y": 2062
     },
     {
       "id": "machine-hand-coin-ak",
@@ -1868,12 +1868,12 @@
     {
       "id": "machine-hand-coin-al",
       "x": 7160,
-      "y": 1578
+      "y": 1590
     },
     {
       "id": "machine-hand-coin-am",
       "x": 6100,
-      "y": 1850
+      "y": 1862
     },
     {
       "id": "machine-hand-coin-an",
@@ -1888,7 +1888,7 @@
     {
       "id": "machine-hand-coin-ap",
       "x": 4690,
-      "y": 1350
+      "y": 1362
     },
     {
       "id": "machine-hand-coin-aq",
@@ -1898,27 +1898,27 @@
     {
       "id": "machine-hand-coin-ar",
       "x": 3490,
-      "y": 1350
+      "y": 1362
     },
     {
       "id": "machine-hand-coin-as",
       "x": 2860,
-      "y": 446
+      "y": 462
     },
     {
       "id": "machine-hand-coin-at",
       "x": 3460,
-      "y": 810
+      "y": 822
     },
     {
       "id": "machine-hand-coin-au",
       "x": 3070,
-      "y": 630
+      "y": 642
     },
     {
       "id": "machine-hand-coin-av",
       "x": 2820,
-      "y": 450
+      "y": 462
     },
     {
       "id": "machine-hand-coin-aw",
@@ -1928,27 +1928,27 @@
     {
       "id": "machine-hand-coin-ax",
       "x": 2070,
-      "y": 1350
+      "y": 1362
     },
     {
       "id": "machine-hand-coin-ay",
       "x": 1580,
-      "y": 1510
+      "y": 1522
     },
     {
       "id": "machine-hand-coin-az",
       "x": 1270,
-      "y": 1650
+      "y": 1662
     },
     {
       "id": "machine-hand-coin-ba",
       "x": 700,
-      "y": 2270
+      "y": 2282
     },
     {
       "id": "machine-hand-coin-bb",
       "x": 640,
-      "y": 2430
+      "y": 2442
     }
   ],
   "enemies": [],
@@ -2366,7 +2366,7 @@
       "kind": "redcoin",
       "name": "红色风币",
       "x": 920,
-      "y": 3386
+      "y": 3402
     },
     {
       "id": "machine-v3-red-2",
@@ -2381,7 +2381,7 @@
       "kind": "redcoin",
       "name": "红色风币",
       "x": 4110,
-      "y": 3406
+      "y": 3422
     },
     {
       "id": "machine-v3-red-4",
@@ -2404,14 +2404,14 @@
       "kind": "redcoin",
       "name": "红色风币",
       "x": 4810,
-      "y": 1346
+      "y": 1362
     },
     {
       "id": "machine-v3-red-7",
       "kind": "redcoin",
       "name": "红色风币",
       "x": 7570,
-      "y": 1426
+      "y": 1442
     },
     {
       "id": "machine-environment-piston",
