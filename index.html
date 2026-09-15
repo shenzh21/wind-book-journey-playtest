@@ -38,10 +38,13 @@
           <section class="library-panel"><header><div><div class="eyebrow">THE LIBRARY OF WINDS</div><h2>藏书目录</h2><p id="shelf-summary"></p></div><button id="library-close" class="panel-close" aria-label="返回游戏">×</button></header><p class="library-story">那夜，一阵恶风撞开了图书馆的窗。书飞越山谷与云海，落进了各个世界。每找回一本，就有一个故事回到书架。</p><div id="shelf" class="shelf"></div><button id="export-full-save" class="text-button">导出内测存档 →</button><button id="export-godot-save" hidden class="text-button">导出存档，带到 Godot 版 →</button></section>
         </div>
         <div class="modal-backdrop" id="reader-overlay" hidden role="dialog" aria-modal="true" aria-label="阅读风之书">
-          <article class="reader-panel"><header class="book-frontmatter"><div class="reader-top"><span id="reader-number"></span><span id="reader-genre"></span></div><h2 id="reader-title"></h2><div class="reader-ornament" aria-hidden="true">≋</div></header><section class="book-reading-page"><div id="reader-content" class="reader-content"></div><small class="subtitle-controls">↑ ↓ 翻阅文字 · ← → 选择 · Z 确认 · X 合上书</small></section><div class="reader-bottom"><button id="reader-shelf" class="text-button">← 藏书目录</button><button id="reader-close" class="primary">合上书，继续冒险 →</button></div></article>
+          <article class="reader-panel"><header class="book-frontmatter"><div class="reader-top"><span id="reader-number"></span><span id="reader-genre"></span></div><h2 id="reader-title"></h2><div class="reader-ornament" aria-hidden="true">≋</div></header><section class="book-reading-page"><div id="reader-content" class="reader-content"></div><small class="subtitle-controls">上下翻阅文字 · 空格 / 回车确认 · Esc / P 合上书</small></section><div class="reader-bottom"><button id="reader-shelf" class="text-button">← 藏书目录</button><button id="reader-close" class="primary">合上书，继续冒险 →</button></div></article>
         </div>
-        <div class="modal-backdrop" id="settings-overlay" hidden><section class="modal"><h2>随风而行</h2><p>← → / A D 移动 · Z 二段跳（松开降低高度）· X 旋转攻击 / 空中缓降 · C 专属动作<br>跑动中突然反向，立刻按 Z：高跳后空翻<br>↑ 进入 / 阅读 · ↓ 坐地 · ↓+Z 下穿平台 · Esc 暂停<br>菜单：方向键选择，Z / Enter 确认，X / Esc 返回<br>阅读：↑↓ / PageUp / PageDown 滚动</p><button id="sound" title="打开声音" aria-label="打开声音" aria-pressed="false">♪<span>声音关</span></button><button id="fullscreen" title="全屏" aria-label="全屏">⛶</button><button id="touch-toggle">显示 / 隐藏触控</button><button id="settings-back">返回暂停菜单</button></section></div>
-<button id="expedition-journal" hidden>J · 旅途札记 / C · 专属动作</button>
+        <div class="modal-backdrop" id="settings-overlay" hidden><section class="modal"><h2>随风而行</h2><p id="control-summary"></p>
+<div class="control-presets" role="group" aria-label="按键预设"><button id="keys-arrows">方向键 ＋ Z X C</button><button id="keys-wasd">W A S D ＋ J K L</button></div>
+<p class="key-help">点击动作后按下新按键。Esc 取消；空格／回车确认，Esc／P 暂停始终可用。</p><div id="key-bindings" class="key-bindings"></div><p id="key-binding-status" role="status" aria-live="polite"></p><button id="keys-reset">恢复当前预设</button>
+<button id="sound" title="打开声音" aria-label="打开声音" aria-pressed="false">♪<span>声音关</span></button><button id="fullscreen" title="全屏" aria-label="全屏">⛶</button><button id="touch-toggle">显示 / 隐藏触控</button><button id="settings-back">返回暂停菜单</button></section></div>
+<button id="expedition-journal" hidden>M · 旅途札记 / C · 专属动作</button>
 <div class="modal-backdrop" id="journal-overlay" hidden><section class="modal journal-panel" role="dialog" aria-modal="true" aria-labelledby="journal-title"><h2 id="journal-title"></h2><p id="journal-ability"></p><div id="journal-list"></div><button id="journal-back">返回游戏</button></section></div>
 <div class="modal-backdrop" id="journal-entry-overlay" hidden><section class="modal journal-panel" role="dialog" aria-modal="true" aria-labelledby="journal-entry-title"><h2 id="journal-entry-title"></h2><p id="journal-entry-progress"></p><p id="journal-entry-text"></p><button id="journal-entry-back">返回札记</button></section></div>
 <div class="modal-backdrop narrative-overlay" id="adventure-overlay" hidden><section class="modal adventure-panel" role="region" aria-label="旅途对话"><h2 id="adventure-title"></h2><p id="adventure-text"></p><div id="adventure-options"></div></section></div>
@@ -74,6 +77,7 @@
 <script src="expansion/runtime.js"></script>
 <script src="expansion/render.js"></script>
 <script src="wind-audio.js"></script>
+<script src="key-bindings.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

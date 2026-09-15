@@ -106,7 +106,7 @@
   function finishOpening(){storyComplete=true;save();opening=null;$('opening-ui').hidden=true;document.querySelector('.game-shell').classList.remove('opening');keys.clear();justPressed.clear();renderDirty=true;canvas.focus();}
   function startOpening(){
     $('opening-ui').hidden=false;document.querySelector('.game-shell').classList.add('opening');
-    opening=window.WindIntro.create({ctx,art,onCaption:text=>$('opening-caption').textContent=text,onFinish:finishOpening});
+    opening=window.WindIntro.create({ctx,art,onCaption:text=>$('opening-caption').textContent=controlText(text),onFinish:finishOpening});
     keys.clear();justPressed.clear();renderDirty=true;
   }
   function updateHud(){
@@ -120,7 +120,7 @@
     $('expedition-journal').hidden=!expansionWorld();$('menu-journal').hidden=!expansionWorld();
   }
 
-  function toast(message,seconds=3.6){$('toast').textContent=message;$('toast').classList.add('show');toastUntil=performance.now()+seconds*1000;}
+  function toast(message,seconds=3.6){$('toast').textContent=controlText(message);$('toast').classList.add('show');toastUntil=performance.now()+seconds*1000;}
   const soundscape=window.WindAudio?.create();
   // First visit defaults to on; an explicit saved preference takes priority.
   try{sound=localStorage.getItem('wind-machine-playtest-audio')!=='false';}catch{sound=true;}
@@ -392,6 +392,7 @@
     const option=d.options[index];if(!option)return;closeSpeech();option.action();
   }
   function openAdventure(title,text,options=[],anchor=undefined){
+    text=controlText(text);
     // Dialogue remains part of the running world. Only real decisions get buttons.
     closeSpeech();if(paused)setPaused(false);justPressed.delete('ArrowUp');
     if(anchor===undefined){const p={x:player.x+15,y:player.y+22};
@@ -413,7 +414,7 @@
     const list=$('journal-list');list.replaceChildren();
     for(const entry of expedition.journal()){
       const button=document.createElement('button');button.textContent=(entry.collected?'已归还 · ':entry.ready?'已出现 · ':'寻找中 · ')+entry.title;
-      button.onclick=()=>{setPaused(true,'journal-entry');$('journal-entry-title').textContent=entry.title;$('journal-entry-text').textContent=entry.text;$('journal-entry-progress').textContent='进度：'+entry.progress;$('journal-entry-text').scrollTop=0;};list.append(button);
+      button.onclick=()=>{setPaused(true,'journal-entry');$('journal-entry-title').textContent=entry.title;$('journal-entry-text').textContent=controlText(entry.text);$('journal-entry-progress').textContent='进度：'+entry.progress;$('journal-entry-text').scrollTop=0;};list.append(button);
     }
     setPaused(true,'journal');list.scrollTop=0;list.children[0]?.focus({preventScroll:true});
     $('journal-back').textContent=journalReturnToPause?'返回暂停菜单':'返回游戏';
@@ -775,7 +776,19 @@
   }
   let modalKind=null;
   const gameKeys = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','KeyA','KeyD','KeyZ','KeyX','KeyC'];
-  const releasedKeys=new Set();
+  const releasedKeys=new Set(),physicalKeys=new Map();
+  const controls=window.WindControls?.create(localStorage);
+  let bindingAction=null,lastPreset=controls?.basePreset||'arrows';
+  function controlText(text){if(!controls)return text;const map={Z:'KeyZ',X:'KeyX',C:'KeyC','↑':'ArrowUp','↓':'ArrowDown','←':'ArrowLeft','→':'ArrowRight'};return String(text).replace(/[↑↓←→]|\b[ZXC]\b/g,k=>controls.label(controls.map[map[k]]));}
+  function renderBindings(){if(!controls)return;const list=$('key-bindings');list.replaceChildren();
+    for(const [action,title]of Object.entries(controls.labels)){const b=document.createElement('button');b.textContent=title+'　'+controls.label(controls.map[action]);b.onclick=()=>{bindingAction=action;$('key-binding-status').textContent='请为“'+title+'”按下新按键（Esc 取消）';keys.clear();justPressed.clear();};list.append(b);}
+    $('keys-arrows').setAttribute('aria-pressed',String(controls.preset==='arrows'));$('keys-wasd').setAttribute('aria-pressed',String(controls.preset==='wasd'));
+    const k=a=>controls.label(controls.map[a]);$('control-summary').textContent=k('ArrowLeft')+' / '+k('ArrowRight')+' 移动 · '+k('KeyZ')+' 跳跃／二段跳 · '+k('KeyX')+' 旋转／空中缓降 · '+k('KeyC')+' 专属动作。'+k('ArrowUp')+' 互动 · '+k('ArrowDown')+' 坐地 · '+k('ArrowDown')+'＋'+k('KeyZ')+' 下穿平台。反向后立即跳跃：后空翻。空格／回车确认和跳过，Esc／P 暂停。';
+    $('expedition-journal').textContent=k('Journal')+' · 旅途札记 / '+k('KeyC')+' · 专属动作';
+    document.querySelectorAll('[data-key]').forEach(b=>{if(['KeyZ','KeyX','KeyC'].includes(b.dataset.key))b.textContent=k(b.dataset.key);});
+  }
+  function chooseKeys(name){if(!controls)return;controls.choose(name);lastPreset=name;bindingAction=null;keys.clear();justPressed.clear();physicalKeys.clear();releasedKeys.clear();renderBindings();$('key-binding-status').textContent='已切换预设并保存。';}
+  if(controls){$('keys-arrows').onclick=()=>chooseKeys('arrows');$('keys-wasd').onclick=()=>chooseKeys('wasd');$('keys-reset').onclick=()=>chooseKeys(lastPreset);renderBindings();}
   function activeModal(){return modalKind?$(modalKind+'-overlay'):null;}
   function menuButtons(){return [...activeModal().querySelectorAll('button:not(:disabled)')].filter(b=>!b.hidden&&b.getClientRects().length);}
   let journalNavX=null;
@@ -792,32 +805,37 @@
   }
   window.addEventListener('keydown',e=>{
     soundscape?.unlock();
+    if(bindingAction&&(!paused||modalKind!=='settings'))bindingAction=null;
+    if(bindingAction){e.preventDefault();if(e.repeat)return;if(e.code==='Escape'){bindingAction=null;$('key-binding-status').textContent='已取消。';return;}const error=controls.bind(bindingAction,e.code);if(error){$('key-binding-status').textContent=error;return;}bindingAction=null;keys.clear();justPressed.clear();physicalKeys.clear();releasedKeys.clear();renderBindings();$('key-binding-status').textContent='已保存按键。';return;}
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    const code=controls?controls.resolve(e.code):e.code==='Space'?'Enter':e.code==='KeyP'?'Escape':e.code;
+    if(!code)return;physicalKeys.set(e.code,code);
     if(e.target.matches?.('input,textarea'))return;
-    if(opening&&!paused&&e.code==='Enter'){e.preventDefault();if(!e.repeat){releasedKeys.add(e.code);finishOpening();}return;}
-    if(opening?.locked&&!paused&&gameKeys.includes(e.code)){e.preventDefault();releasedKeys.add(e.code);return;}
-    if(speech&&!paused&&['Enter','ArrowUp','ArrowDown','Tab'].includes(e.code)){
+    if(opening&&!paused&&code==='Enter'){e.preventDefault();if(!e.repeat){releasedKeys.add(code);finishOpening();}return;}
+    if(opening?.locked&&!paused&&gameKeys.includes(code)){e.preventDefault();releasedKeys.add(code);return;}
+    if(speech&&!paused&&['Enter','ArrowUp','ArrowDown','Tab'].includes(code)){
       e.preventDefault();if(e.repeat)return;
-      if(e.code==='Enter')advanceSpeech();
+      if(code==='Enter')advanceSpeech();
       else if(speech.options.length&&speech.shown>=speech.characters.length){
-        speech.index=(speech.index+(e.code==='ArrowUp'||e.shiftKey?-1:1)+speech.options.length)%speech.options.length;
+        speech.index=(speech.index+(code==='ArrowUp'||e.shiftKey?-1:1)+speech.options.length)%speech.options.length;
         [...$('adventure-options').children].forEach((b,i)=>{b.textContent=(i===speech.index?'▸ ':'')+speech.options[i].label;if(i===speech.index)b.scrollIntoView({block:'nearest'});});
       }
       return;
     }
-    if(!paused&&!opening&&e.code==='KeyJ'&&expedition){e.preventDefault();if(!e.repeat)openJournal();return;}
-    if(paused&&['journal','journal-entry'].includes(modalKind)&&(e.code==='Escape'||e.code==='KeyX')){e.preventDefault();if(!e.repeat){releasedKeys.add(e.code);if(modalKind==='journal-entry')showJournal();else closeJournal();}return;}
-    if(e.code==='Escape'||(paused&&e.code==='KeyX')){e.preventDefault();if(e.repeat)return;releasedKeys.add(e.code);if(!paused)setPaused(true);else if(['settings','hint','confirm','map'].includes(modalKind))setPaused(true);else setPaused(false);return;}
+    if(!paused&&!opening&&code==='Journal'&&expedition){e.preventDefault();if(!e.repeat)openJournal();return;}
+    if(paused&&['journal','journal-entry'].includes(modalKind)&&(code==='Escape'||code==='KeyX')){e.preventDefault();if(!e.repeat){releasedKeys.add(code);if(modalKind==='journal-entry')showJournal();else closeJournal();}return;}
+    if(code==='Escape'||(paused&&code==='KeyX')){e.preventDefault();if(e.repeat)return;releasedKeys.add(code);if(!paused)setPaused(true);else if(['settings','hint','confirm','map'].includes(modalKind))setPaused(true);else setPaused(false);return;}
     if(paused){
-      if(['KeyZ','Enter','Space'].includes(e.code)){e.preventDefault();if(!e.repeat){releasedKeys.add(e.code);document.activeElement?.click();}return;}
-      const scrolling=['PageDown','PageUp','Home','End'].includes(e.code)||(modalKind==='reader'&&['ArrowUp','ArrowDown'].includes(e.code));
-      if(scrolling){const panel=modalKind==='journal-entry'?$('journal-entry-text'):modalKind==='journal'?$('journal-list'):modalKind==='reader'?$('reader-content'):modalKind==='adventure'?activeModal().querySelector('.adventure-panel'):activeModal().querySelector('.reader-panel,.library-panel');if(panel){e.preventDefault();panel.scrollTop=e.code==='Home'?0:e.code==='End'?panel.scrollHeight:panel.scrollTop+(['PageDown','ArrowDown'].includes(e.code)?1:-1)*(e.code.startsWith('Page')?300:42);}return;}
-      if(modalKind==='journal'&&e.code.startsWith('Arrow')){e.preventDefault();if(!e.repeat)navigateJournal(e.code);return;}
-      if(e.code.startsWith('Arrow')||e.code==='Tab'){e.preventDefault();const buttons=menuButtons(),i=buttons.indexOf(document.activeElement),step=(e.code==='ArrowUp'||e.code==='ArrowLeft'||e.shiftKey)?-1:1;const next=buttons[(i+step+buttons.length)%buttons.length];next?.focus();next?.scrollIntoView({block:'nearest'});}return;
+      if(['KeyZ','Enter','Space'].includes(code)){e.preventDefault();if(!e.repeat){releasedKeys.add(code);document.activeElement?.click();}return;}
+      const scrolling=['PageDown','PageUp','Home','End'].includes(code)||(modalKind==='reader'&&['ArrowUp','ArrowDown'].includes(code));
+      if(scrolling){const panel=modalKind==='journal-entry'?$('journal-entry-text'):modalKind==='journal'?$('journal-list'):modalKind==='reader'?$('reader-content'):modalKind==='adventure'?activeModal().querySelector('.adventure-panel'):activeModal().querySelector('.reader-panel,.library-panel');if(panel){e.preventDefault();panel.scrollTop=code==='Home'?0:code==='End'?panel.scrollHeight:panel.scrollTop+(['PageDown','ArrowDown'].includes(code)?1:-1)*(code.startsWith('Page')?300:42);}return;}
+      if(modalKind==='journal'&&code.startsWith('Arrow')){e.preventDefault();if(!e.repeat)navigateJournal(code);return;}
+      if(code.startsWith('Arrow')||code==='Tab'){e.preventDefault();const buttons=menuButtons(),i=buttons.indexOf(document.activeElement),step=(code==='ArrowUp'||code==='ArrowLeft'||e.shiftKey)?-1:1;const next=buttons[(i+step+buttons.length)%buttons.length];next?.focus();next?.scrollIntoView({block:'nearest'});}return;
     }
-    if((bookReveal||race?.status==='handing'&&scene==='meadow')&&gameKeys.includes(e.code)){e.preventDefault();releasedKeys.add(e.code);return;}
-    if(!gameKeys.includes(e.code)||releasedKeys.has(e.code))return;e.preventDefault();if(!keys.has(e.code))justPressed.add(e.code);keys.add(e.code);
+    if((bookReveal||race?.status==='handing'&&scene==='meadow')&&gameKeys.includes(code)){e.preventDefault();releasedKeys.add(code);return;}
+    if(!gameKeys.includes(code)||releasedKeys.has(code))return;e.preventDefault();if(!keys.has(code))justPressed.add(code);keys.add(code);
   });
-  window.addEventListener('keyup',e=>{keys.delete(e.code);releasedKeys.delete(e.code);});
+  window.addEventListener('keyup',e=>{const code=physicalKeys.get(e.code)||(controls?controls.resolve(e.code):e.code);physicalKeys.delete(e.code);if(![...physicalKeys.values()].includes(code))keys.delete(code);releasedKeys.delete(code);});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&!paused)setPaused(true);});
   const touchReleases=[];
   document.querySelectorAll('[data-key]').forEach(b=>{
@@ -826,7 +844,7 @@
     b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);if(opening?.locked&&!paused)return;if(!paused&&!bookReveal){pointers.add(e.pointerId);b.classList.add('is-held');if(!keys.has(b.dataset.key))justPressed.add(b.dataset.key);keys.add(b.dataset.key);}});
     const release=e=>{pointers.delete(e.pointerId);if(!pointers.size)clear();};b.addEventListener('pointerup',release);b.addEventListener('pointercancel',release);b.addEventListener('lostpointercapture',release);
   });
-  window.addEventListener('blur',()=>{touchReleases.forEach(release=>release());if(!paused)setPaused(true);});
+  window.addEventListener('blur',()=>{touchReleases.forEach(release=>release());physicalKeys.clear();if(!paused)setPaused(true);});
   if(window.matchMedia?.('(pointer: coarse)').matches)document.querySelector('.touch-controls').classList.add('enabled');
   document.addEventListener('pointerdown',()=>soundscape?.unlock(),{capture:true});
   canvas.addEventListener('pointerdown',()=>canvas.focus({preventScroll:true}));
